@@ -127,8 +127,4 @@ npm install
 npm start
 ```
 
-## Документація попередніх завдань
-
-- [docs/HW66-crud-api.md](docs/HW66-crud-api.md) — CRUD-операції MongoDB (`insertOne … deleteMany`), `find` з проєкцією.
-- [docs/HW67-cursors-aggregations.md](docs/HW67-cursors-aggregations.md) — курсори, агрегаційні запити, порівняння на великих даних, налаштування Atlas.
 
