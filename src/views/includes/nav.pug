@@ -1,0 +1,20 @@
+nav.navbar
+  .navbar-inner
+    a.brand(href="/") Express Views
+    .nav-links
+      a(href="/protected", class=(section === 'protected' ? 'active' : '')) Захищена
+      a(href="/users", class=(section === 'users' ? 'active' : '')) Користувачі
+      a(href="/articles", class=(section === 'articles' ? 'active' : '')) Статті
+    .nav-actions
+      form.inline-form(method="post", action="/theme")
+        input(type="hidden", name="theme", value=(theme === 'dark' ? 'light' : 'dark'))
+        button.btn.btn-ghost(type="submit", title="Змінити тему")= theme === 'dark' ? '☀️ Світла' : '🌙 Темна'
+      if currentUser
+        .user-chip
+          span= currentUser.username
+          span.badge(class=`badge-${currentUser.role}`)= currentUser.role
+        form.inline-form(method="post", action="/logout")
+          button.btn.btn-ghost(type="submit") Вийти
+      else
+        a.btn.btn-ghost(href="/login") Увійти
+        a.btn.btn-primary(href="/register") Реєстрація

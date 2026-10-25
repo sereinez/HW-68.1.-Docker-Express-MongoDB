@@ -1,0 +1,28 @@
+extends ../layout
+
+block content
+  a.back-link(href="/users") ← До списку користувачів
+
+  .card.details
+    .details-head
+      h1= person.username
+      span.badge(class=`badge-${person.role}`)= person.role
+    dl.props
+      dt ID
+      dd= person.id
+      dt Ім'я
+      dd= person.username
+      if person.email
+        dt Email
+        dd= person.email
+      dt Роль
+      dd= person.role
+
+  h2 Статті користувача
+  if articles.length > 0
+    ul.link-list
+      each article in articles
+        li
+          a(href=`/articles/${article.id}`)= article.title
+  else
+    p.empty У цього користувача ще немає статей.

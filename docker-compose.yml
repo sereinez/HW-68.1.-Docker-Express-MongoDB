@@ -1,0 +1,70 @@
+# ==========================================================================
+# Docker Compose: Express-додаток + MongoDB.   Запуск:  docker compose up --build
+# ==========================================================================
+name: express-mongo-docker
+
+services:
+  # ---------------------------------------------------------------- Express-додаток
+  app:
+    build: .                        # образ збирається за Dockerfile у цій папці
+    container_name: express-app
+
+    # У розробці замість `node` запускаємо nodemon: він перезапускає додаток при зміні файлів у src/.
+    # Прапорець legacyWatch (у nodemon.json) вмикає перевірку змін опитуванням — це ОБОВ'ЯЗКОВО для
+    # Docker на Windows/macOS, де події про зміну файлів з хоста не доходять до контейнера.
+    command: ["./node_modules/.bin/nodemon", "src/server.js"]
+    init: true                      # коректне завершення процесу за Ctrl+C / docker compose down
+
+    ports:
+      - "3000:3000"                 # http://localhost:3000  (хост:контейнер)
+
+    environment:
+      # Адреса бази: хост "mongo" — це ІМ'Я СЕРВІСУ нижче. Усередині мережі Compose контейнери
+      # знаходять один одного за іменами сервісів. Назва бази (express_app) створюється автоматично.
+      MONGODB_URI: mongodb://mongo:27017/express_app
+      SESSION_SECRET: ${SESSION_SECRET:-dev-secret-change-me}
+      NODE_ENV: development
+      PORT: 3000
+
+    depends_on:
+      mongo:
+        condition: service_healthy  # запускати додаток лише коли MongoDB справді готова приймати запити
+
+    volumes:
+      # Синхронізація коду: зміни в локальних папках одразу видно в контейнері (без перезбирання образу).
+      # Монтуємо лише код — а не всю папку проєкту, щоб не перекрити node_modules з образу
+      # і не потягнути в контейнер файл .env з паролями.
+      - ./src:/app/src
+      - ./public:/app/public
+
+    healthcheck:                    # docker compose ps покаже стан "healthy", коли додаток і база працюють
+      test: ["CMD", "node", "-e", "fetch('http://localhost:3000/health').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------- MongoDB
+  mongo:
+    image: mongo:7                  # офіційний образ MongoDB
+    container_name: express-mongo
+
+    ports:
+      - "127.0.0.1:27017:27017"     # лише для localhost: щоб підключитись з MongoDB Compass (mongodb://localhost:27017)
+
+    volumes:
+      - mongo-data:/data/db         # іменований том: дані зберігаються між перезапусками контейнерів
+
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+    restart: unless-stopped
+
+volumes:
+  mongo-data:

@@ -1,0 +1,27 @@
+extends ../layout
+
+block content
+  h1 Користувачі
+  p.subtitle Усього: #{users.length} · дані з MongoDB
+
+  if users.length === 0
+    p.empty Користувачів поки немає.
+  else
+    table.table
+      thead
+        tr
+          th ID
+          th Ім'я
+          if currentUser && currentUser.role === 'admin'
+            th Email
+          th Роль
+      tbody
+        each user in users
+          tr
+            td= user.id
+            td
+              a(href=`/users/${user.id}`)= user.username
+            if currentUser && currentUser.role === 'admin'
+              td= user.email
+            td
+              span.badge(class=`badge-${user.role}`)= user.role

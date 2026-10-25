@@ -1,0 +1,301 @@
+/* ---------- Змінні: світла тема (за замовчуванням) ---------- */
+:root {
+  --bg: #f4f6fb;
+  --surface: #ffffff;
+  --surface-alt: #f9fafb;
+  --hover: #fafbff;
+  --text: #1f2937;
+  --text-soft: #4b5563;
+  --muted: #6b7280;
+  --primary: #4f46e5;
+  --primary-hover: #4338ca;
+  --primary-soft: #eef2ff;
+  --border: #e5e7eb;
+  --danger-bg: #fee2e2;
+  --danger-fg: #b91c1c;
+  --ok-bg: #dcfce7;
+  --ok-fg: #15803d;
+  --info-bg: #dbeafe;
+  --info-fg: #1d4ed8;
+  --badge-bg: #e5e7eb;
+  --badge-fg: #374151;
+  --radius: 12px;
+  --shadow: 0 1px 3px rgba(15, 23, 42, 0.08), 0 8px 24px rgba(15, 23, 42, 0.04);
+  --shadow-hover: 0 4px 12px rgba(15, 23, 42, 0.1);
+  color-scheme: light;
+}
+
+/* ---------- Темна тема: вмикається атрибутом <html data-theme="dark"> ---------- */
+[data-theme="dark"] {
+  --bg: #0f172a;
+  --surface: #1e293b;
+  --surface-alt: #172033;
+  --hover: #243247;
+  --text: #e2e8f0;
+  --text-soft: #cbd5e1;
+  --muted: #94a3b8;
+  --primary: #818cf8;
+  --primary-hover: #a5b4fc;
+  --primary-soft: #312e81;
+  --border: #334155;
+  --danger-bg: #7f1d1d;
+  --danger-fg: #fecaca;
+  --ok-bg: #14532d;
+  --ok-fg: #bbf7d0;
+  --info-bg: #1e3a8a;
+  --info-fg: #bfdbfe;
+  --badge-bg: #334155;
+  --badge-fg: #e2e8f0;
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  --shadow-hover: 0 4px 14px rgba(0, 0, 0, 0.5);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+a { color: var(--primary); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ---------- Навігація ---------- */
+.navbar {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.navbar-inner {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 20px;
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+}
+
+.brand { font-weight: 700; font-size: 1.1rem; color: var(--text); }
+.brand:hover { text-decoration: none; }
+
+.nav-links { display: flex; gap: 8px; flex: 1; }
+.nav-links a {
+  color: var(--muted);
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-weight: 500;
+}
+.nav-links a:hover,
+.nav-links a.active {
+  background: var(--primary-soft);
+  color: var(--primary);
+  text-decoration: none;
+}
+
+.nav-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.inline-form { margin: 0; }
+
+.user-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+/* ---------- Кнопки ---------- */
+.btn {
+  display: inline-block;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  text-align: center;
+  line-height: 1.5;
+}
+.btn:hover { text-decoration: none; }
+.btn-primary { background: var(--primary); color: #fff; }
+.btn-primary:hover { background: var(--primary-hover); }
+[data-theme="dark"] .btn-primary { color: #0f172a; }
+.btn-ghost { background: transparent; color: var(--text); border-color: var(--border); }
+.btn-ghost:hover { background: var(--primary-soft); color: var(--primary); }
+.btn-block { display: block; width: 100%; padding: 10px 14px; font-size: 1rem; }
+
+/* ---------- Контент ---------- */
+.container {
+  flex: 1;
+  width: 100%;
+  max-width: 960px;
+  margin: 32px auto;
+  padding: 0 20px;
+}
+
+h1 { margin: 0 0 8px; font-size: 1.8rem; line-height: 1.25; }
+h2 { margin: 32px 0 12px; font-size: 1.25rem; }
+
+.subtitle { margin: 0 0 20px; color: var(--muted); }
+.empty { color: var(--muted); font-style: italic; }
+
+.back-link { display: inline-block; margin-bottom: 16px; font-weight: 500; }
+
+/* ---------- Таблиця ---------- */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--surface);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+.table th,
+.table td { padding: 14px 18px; text-align: left; }
+.table thead th {
+  background: var(--surface-alt);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  border-bottom: 1px solid var(--border);
+}
+.table tbody tr + tr td { border-top: 1px solid var(--border); }
+.table tbody tr:hover { background: var(--hover); }
+
+/* ---------- Бейджі ---------- */
+.badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: var(--badge-bg);
+  color: var(--badge-fg);
+}
+.badge-admin { background: var(--danger-bg); color: var(--danger-fg); }
+.badge-user { background: var(--ok-bg); color: var(--ok-fg); }
+.badge-id { background: var(--primary-soft); color: var(--primary); }
+
+/* ---------- Картки ---------- */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 22px;
+}
+.cards .card { transition: transform 0.15s ease, box-shadow 0.15s ease; }
+.cards .card:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); }
+.card h2 { margin: 0 0 8px; font-size: 1.15rem; }
+.excerpt { margin: 0 0 14px; color: var(--text-soft); }
+.meta { margin: 0; font-size: 0.9rem; color: var(--muted); }
+
+.tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 12px; }
+.tag {
+  background: var(--primary-soft);
+  color: var(--primary);
+  padding: 1px 10px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.details .details-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.details .details-head h1 { margin: 0; }
+
+.props {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 8px 24px;
+  margin: 0;
+}
+.props dt { color: var(--muted); font-weight: 500; }
+.props dd { margin: 0; }
+
+.article-body {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+  white-space: pre-wrap;
+  font-size: 1.05rem;
+}
+
+.link-list { padding-left: 20px; }
+.link-list li { margin: 6px 0; }
+
+/* ---------- Форми входу / реєстрації ---------- */
+.auth-card { max-width: 420px; margin: 24px auto; }
+
+.form { display: flex; flex-direction: column; gap: 16px; }
+.field { display: flex; flex-direction: column; gap: 4px; }
+.field label { font-weight: 500; font-size: 0.9rem; }
+.field input {
+  font: inherit;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface-alt);
+  color: var(--text);
+}
+.field input:focus {
+  outline: 2px solid var(--primary);
+  outline-offset: 1px;
+  border-color: transparent;
+}
+.hint { color: var(--muted); font-size: 0.8rem; }
+
+.alert { list-style: none; padding: 12px 16px; margin: 0 0 16px; border-radius: 8px; }
+.alert li + li { margin-top: 4px; }
+.alert-error { background: var(--danger-bg); color: var(--danger-fg); }
+.alert-info { background: var(--info-bg); color: var(--info-fg); }
+
+.row { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.check { display: flex; align-items: center; gap: 8px; font-size: 0.9rem; color: var(--text-soft); cursor: pointer; }
+.small-link { font-size: 0.9rem; }
+.no-margin { margin: 0; }
+
+.auth-switch { margin: 20px 0 0; text-align: center; color: var(--muted); font-size: 0.9rem; }
+
+/* ---------- Футер ---------- */
+.footer {
+  text-align: center;
+  padding: 20px;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+.footer p { margin: 0; }
+
+/* ---------- Мобільні пристрої ---------- */
+@media (max-width: 600px) {
+  .navbar-inner { gap: 8px 12px; padding: 8px 12px; }
+  .brand { display: none; }
+  .nav-links { flex-basis: 100%; }
+  .container { margin: 20px auto; }
+  h1 { font-size: 1.5rem; }
+  .table th, .table td { padding: 10px 12px; }
+}

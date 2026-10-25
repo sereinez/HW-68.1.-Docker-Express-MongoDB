@@ -1,0 +1,25 @@
+# Усе, що НЕ повинно потрапляти в образ (скорочує збірку й не кладе секрети в образ)
+
+# Залежності встановлюються всередині образу (npm ci), локальні — не потрібні й можуть бути для іншої ОС
+node_modules
+npm-debug.log*
+
+# Секрети: файл .env містить паролі (шаблон .env.example — можна залишити)
+.env
+.env.*
+!.env.example
+
+# Службове
+.git
+.gitignore
+.vscode
+.idea
+.DS_Store
+
+# Docker-файли та документація всередині образу не потрібні
+Dockerfile
+.dockerignore
+docker-compose*.yml
+README.md
+docs
+requests.http

@@ -1,0 +1,15 @@
+extends ../layout
+
+block content
+  .card.auth-card
+    h1 Новий пароль
+    p.subtitle Придумайте новий пароль для свого акаунта.
+
+    include ../includes/alerts
+
+    form.form(method="post", action=`/reset-password/${token}`)
+      .field
+        label(for="password") Новий пароль
+        input#password(type="password", name="password", required, minlength="6", autofocus, autocomplete="new-password")
+        small.hint Мінімум 6 символів
+      button.btn.btn-primary.btn-block(type="submit") Зберегти пароль

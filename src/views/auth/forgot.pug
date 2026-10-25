@@ -1,0 +1,17 @@
+extends ../layout
+
+block content
+  .card.auth-card
+    h1 Відновлення пароля
+    p.subtitle Вкажіть email — ми надішлемо посилання для встановлення нового пароля.
+
+    include ../includes/alerts
+
+    form.form(method="post", action="/forgot-password")
+      .field
+        label(for="email") Email
+        input#email(type="email", name="email", value=email, required, autofocus, autocomplete="email")
+      button.btn.btn-primary.btn-block(type="submit") Надіслати посилання
+
+    p.auth-switch
+      a(href="/login") ← Повернутися до входу

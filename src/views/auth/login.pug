@@ -1,0 +1,27 @@
+extends ../layout
+
+block content
+  .card.auth-card
+    h1 Вхід
+    p.subtitle Увійдіть за допомогою email і пароля.
+
+    include ../includes/alerts
+
+    form.form(method="post", action="/login")
+      input(type="hidden", name="next", value=redirectTo)
+      .field
+        label(for="email") Email
+        input#email(type="email", name="email", value=email, required, autofocus, autocomplete="email")
+      .field
+        label(for="password") Пароль
+        input#password(type="password", name="password", required, autocomplete="current-password")
+      .row
+        label.check
+          input(type="checkbox", name="remember")
+          span Запам'ятати мене на 30 днів
+        a.small-link(href="/forgot-password") Забули пароль?
+      button.btn.btn-primary.btn-block(type="submit") Увійти
+
+    p.auth-switch
+      | Немає акаунта? 
+      a(href="/register") Зареєструватися

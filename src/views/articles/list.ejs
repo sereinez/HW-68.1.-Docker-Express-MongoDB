@@ -1,0 +1,30 @@
+<%- include('../partials/header') %>
+
+<h1>Статті</h1>
+<p class="subtitle">Усього: <%= articles.length %> · дані з MongoDB</p>
+
+<% if (articles.length === 0) { %>
+  <p class="empty">Статей поки немає.</p>
+<% } else { %>
+  <div class="cards">
+    <% articles.forEach(article => { %>
+      <article class="card">
+        <h2><a href="/articles/<%= article.id %>"><%= article.title %></a></h2>
+        <p class="excerpt"><%= article.excerpt %></p>
+        <% if (article.tags.length > 0) { %>
+          <p class="tags"><% article.tags.forEach(tag => { %><span class="tag">#<%= tag %></span><% }) %></p>
+        <% } %>
+        <p class="meta">
+          Автор:
+          <% if (article.authorId) { %>
+            <a href="/users/<%= article.authorId %>"><%= article.authorName %></a>
+          <% } else { %>
+            <%= article.authorName %>
+          <% } %>
+        </p>
+      </article>
+    <% }) %>
+  </div>
+<% } %>
+
+<%- include('../partials/footer') %>

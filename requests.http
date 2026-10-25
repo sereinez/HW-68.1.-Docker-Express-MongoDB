@@ -1,0 +1,201 @@
+# ============================================================================
+# Запити до JSON API статей (HW 66.1) та статистики/курсорів (HW 67.1)
+#
+# Як користуватися:
+#   1. Встановіть у VS Code розширення "REST Client" (автор Huachao Mao).
+#   2. Запустіть сервер (npm start).
+#   3. Натискайте "Send Request" над запитом. Спочатку виконайте "0. Вхід" —
+#      cookie сесії зберігається автоматично, далі запити можна виконувати в будь-якому порядку,
+#      але "9. deleteOne" краще останнім: він видаляє статтю, створену в "1. insertOne".
+# ============================================================================
+
+@baseUrl = http://localhost:3000
+
+### 0. Вхід (admin). Cookie сесії зберігається автоматично
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+  "email": "admin@example.com",
+  "password": "admin123"
+}
+
+### 1. insertOne — додати один документ
+# @name insertOne
+POST {{baseUrl}}/api/articles
+Content-Type: application/json
+
+{
+  "title": "Мій перший запис",
+  "content": "Створено через API",
+  "tags": ["node", "mongo"]
+}
+
+### 2. insertMany — додати багато документів
+POST {{baseUrl}}/api/articles/bulk
+Content-Type: application/json
+
+{
+  "articles": [
+    { "title": "Demo про Express", "content": "Текст 1", "tags": ["express", "demo"] },
+    { "title": "Demo про Mongo", "content": "Текст 2", "tags": ["mongo", "db", "demo"] },
+    { "title": "Demo без тегів", "content": "Текст 3", "tags": ["demo"] }
+  ]
+}
+
+### 3a. find — усі статті (без проєкції), 5 штук
+GET {{baseUrl}}/api/articles?limit=5
+
+### 3b. find + projection (fields): лише title і tags, фільтр за тегом
+GET {{baseUrl}}/api/articles?fields=title,tags&tag=mongo
+
+### 3c. find + projection (exclude): усе, крім content і tags
+GET {{baseUrl}}/api/articles?exclude=content,tags&limit=3
+
+### 3d. find: пошук у заголовку, сортування, пагінація
+GET {{baseUrl}}/api/articles?q=demo&sort=title&limit=2&page=1&fields=title
+
+### 3e. find: populate=author — замість id автора повертається { _id, username }
+GET {{baseUrl}}/api/articles?fields=title,author&populate=author&limit=3
+
+### 3f. findOne + projection
+GET {{baseUrl}}/api/articles/{{insertOne.response.body.$.insertedId}}?fields=title,tags
+
+### 4. updateOne — змінити окремі поля ($set)
+PATCH {{baseUrl}}/api/articles/{{insertOne.response.body.$.insertedId}}
+Content-Type: application/json
+
+{
+  "title": "Мій оновлений запис",
+  "tags": ["node", "updated"]
+}
+
+### 5. replaceOne — повна заміна документа (tags не передано -> стануть [])
+PUT {{baseUrl}}/api/articles/{{insertOne.response.body.$.insertedId}}
+Content-Type: application/json
+
+{
+  "title": "Повністю нова стаття",
+  "content": "Нове тіло документа"
+}
+
+### 6. updateMany — додати тег усім статтям з тегом demo
+PATCH {{baseUrl}}/api/articles
+Content-Type: application/json
+
+{
+  "filter": { "tag": "demo" },
+  "update": { "addTags": ["learn"] }
+}
+
+### 7. updateMany — прибрати тег
+PATCH {{baseUrl}}/api/articles
+Content-Type: application/json
+
+{
+  "filter": { "tag": "demo" },
+  "update": { "removeTags": ["learn"] }
+}
+
+### 8. deleteMany — видалити всі статті з тегом demo
+DELETE {{baseUrl}}/api/articles
+Content-Type: application/json
+
+{
+  "filter": { "tag": "demo" }
+}
+
+### 9. deleteOne — видалити статтю, створену в "1. insertOne"
+DELETE {{baseUrl}}/api/articles/{{insertOne.response.body.$.insertedId}}
+
+# ---------------------------------------------------------------------------
+# Приклади помилок
+# ---------------------------------------------------------------------------
+
+### E1. 400 — некоректні дані (title закороткий)
+POST {{baseUrl}}/api/articles
+Content-Type: application/json
+
+{ "title": "x", "content": "y" }
+
+### E2. 400 — порожній фільтр заборонено (захист від видалення всього)
+DELETE {{baseUrl}}/api/articles
+Content-Type: application/json
+
+{ "filter": {} }
+
+### E3. 400 — спроба передати оператор MongoDB у фільтрі (NoSQL-ін'єкція)
+PATCH {{baseUrl}}/api/articles
+Content-Type: application/json
+
+{ "filter": { "author": { "$ne": "x" } }, "update": { "addTags": ["a"] } }
+
+### E4. 404 — статті не існує
+GET {{baseUrl}}/api/articles/507f1f77bcf86cd799439011
+
+# ============================================================================
+# HW 67.1 — КУРСОРИ та АГРЕГАЦІЇ
+# Для осмислених результатів спершу створіть багато даних:  npm run seed:large
+# Параметр to=2026-10-01 виключає дві стартові статті, тож числа збігаються з README.
+# ============================================================================
+
+### 10a. КУРСОР: потоковий експорт, ndjson (за замовчуванням), проєкція
+GET {{baseUrl}}/api/articles/export?fields=title,tags&limit=5&to=2026-10-01
+
+### 10b. КУРСОР: експорт у CSV (збережіть відповідь у файл і відкрийте в Excel)
+GET {{baseUrl}}/api/articles/export?format=csv&fields=title,createdAt&limit=10&to=2026-10-01
+
+### 10c. КУРСОР: експорт у вигляді JSON-масиву з фільтром за тегом
+GET {{baseUrl}}/api/articles/export?format=json&tag=express&limit=3&to=2026-10-01
+
+### 10d. НАЇВНИЙ режим (усе в масив у пам'яті) — лише для порівняння
+GET {{baseUrl}}/api/articles/export?mode=array&limit=1000
+
+### 10e. КУРСОР: менший batchSize (більше обмінів з базою, менше пам'яті)
+GET {{baseUrl}}/api/articles/export?batchSize=100&limit=500
+
+### 11. КУРСОР: статистика обходом документів у Node.js (cursor.eachAsync)
+GET {{baseUrl}}/api/stats/scan?to=2026-10-01
+
+### 12. АГРЕГАЦІЯ: загальна статистика ($facet). Порівняйте data з запитом 11
+GET {{baseUrl}}/api/stats/overview?to=2026-10-01
+
+### 13. АГРЕГАЦІЯ: рейтинг авторів ($group + $lookup)
+GET {{baseUrl}}/api/stats/authors?limit=5&to=2026-10-01
+
+### 14. АГРЕГАЦІЯ: найпопулярніші теги ($unwind + $group)
+GET {{baseUrl}}/api/stats/tags?limit=10&to=2026-10-01
+
+### 15a. АГРЕГАЦІЯ: статті за місяцями ($dateToString)
+GET {{baseUrl}}/api/stats/timeline?interval=month&limit=6&to=2026-10-01
+
+### 15b. АГРЕГАЦІЯ: статті за днями
+GET {{baseUrl}}/api/stats/timeline?interval=day&limit=10&to=2026-10-01
+
+### 16. АГРЕГАЦІЯ з фільтром за тегом (перша стадія $match)
+GET {{baseUrl}}/api/stats/overview?tag=express&to=2026-10-01
+
+### 17. План виконання агрегації (explain)
+GET {{baseUrl}}/api/stats/tags?explain=true&to=2026-10-01
+
+### 18. Перевірка пам'яті сервера (рядок "Пам'ять сервера")
+GET {{baseUrl}}/health
+
+# ---------------------------------------------------------------------------
+# Приклади помилок (HW 67.1)
+# ---------------------------------------------------------------------------
+
+### E5. 400 — невідомий формат експорту (помилка ДО початку потоку)
+GET {{baseUrl}}/api/articles/export?format=xml
+
+### E6. 400 — fields і exclude разом
+GET {{baseUrl}}/api/articles/export?fields=title&exclude=tags
+
+### E7. 400 — limit поза діапазоном
+GET {{baseUrl}}/api/stats/tags?limit=0
+
+### E8. 400 — невідомий interval
+GET {{baseUrl}}/api/stats/timeline?interval=week
+
+### E9. 400 — оператор MongoDB в параметрі (NoSQL-ін'єкція)
+GET {{baseUrl}}/api/stats/overview?author[$ne]=x

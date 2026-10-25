@@ -1,0 +1,27 @@
+<%- include('../partials/header') %>
+
+<a class="back-link" href="/articles">← До списку статей</a>
+
+<article class="card details">
+  <div class="details-head">
+    <h1><%= article.title %></h1>
+    <span class="badge badge-id">#<%= article.id %></span>
+  </div>
+
+  <p class="meta">
+    Автор:
+    <% if (article.authorId) { %>
+      <a href="/users/<%= article.authorId %>"><%= article.authorName %></a>
+    <% } else { %>
+      <%= article.authorName %>
+    <% } %>
+  </p>
+
+  <% if (article.tags.length > 0) { %>
+    <p class="tags"><% article.tags.forEach(tag => { %><span class="tag">#<%= tag %></span><% }) %></p>
+  <% } %>
+
+  <div class="article-body"><%= article.content %></div>
+</article>
+
+<%- include('../partials/footer') %>

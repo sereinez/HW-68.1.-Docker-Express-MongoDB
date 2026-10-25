@@ -1,0 +1,19 @@
+extends layout
+
+block content
+  h1 Захищена сторінка
+  p.subtitle Ви бачите цю сторінку, бо Passport підтвердив вашу сесію.
+
+  .card.details
+    .details-head
+      h2.no-margin= profile.username
+      span.badge(class=`badge-${profile.role}`)= profile.role
+    dl.props
+      dt ID
+      dd= profile.id
+      dt Email
+      dd= profile.email
+      dt Роль
+      dd= profile.role
+      dt Сесія діє до
+      dd= sessionExpires

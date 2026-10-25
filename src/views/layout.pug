@@ -1,0 +1,14 @@
+doctype html
+html(lang="uk", data-theme=theme)
+  head
+    meta(charset="utf-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1")
+    title #{title} — Express Views
+    link(rel="icon", href="/favicon.ico")
+    link(rel="stylesheet", href="/css/style.css")
+  body
+    include includes/nav
+    main.container
+      block content
+    footer.footer
+      p Express · Passport · Sessions · PUG · EJS

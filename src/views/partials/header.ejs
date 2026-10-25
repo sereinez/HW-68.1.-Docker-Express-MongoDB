@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="uk" data-theme="<%= theme %>">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= title %> — Express Views</title>
+  <link rel="icon" href="/favicon.ico">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a class="brand" href="/">Express Views</a>
+      <div class="nav-links">
+        <a href="/protected" class="<%= section === 'protected' ? 'active' : '' %>">Захищена</a>
+        <a href="/users" class="<%= section === 'users' ? 'active' : '' %>">Користувачі</a>
+        <a href="/articles" class="<%= section === 'articles' ? 'active' : '' %>">Статті</a>
+      </div>
+      <div class="nav-actions">
+        <form class="inline-form" method="post" action="/theme">
+          <input type="hidden" name="theme" value="<%= theme === 'dark' ? 'light' : 'dark' %>">
+          <button class="btn btn-ghost" type="submit" title="Змінити тему"><%= theme === 'dark' ? '☀️ Світла' : '🌙 Темна' %></button>
+        </form>
+        <% if (currentUser) { %>
+          <div class="user-chip">
+            <span><%= currentUser.username %></span>
+            <span class="badge badge-<%= currentUser.role %>"><%= currentUser.role %></span>
+          </div>
+          <form class="inline-form" method="post" action="/logout">
+            <button class="btn btn-ghost" type="submit">Вийти</button>
+          </form>
+        <% } else { %>
+          <a class="btn btn-ghost" href="/login">Увійти</a>
+          <a class="btn btn-primary" href="/register">Реєстрація</a>
+        <% } %>
+      </div>
+    </div>
+  </nav>
+  <main class="container">
